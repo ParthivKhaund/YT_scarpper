@@ -1,77 +1,85 @@
-# find title 
-# find category
-# find channel name
-# find subscriber count 
-# find views 
-# find likes and dislikes 
-# language
-# location
-
-# total amount of comments (for this we would need to use selenium as it only loads comments as we scroll down)
-
-
 from bs4 import BeautifulSoup
 import requests 
 import re
 
-url = "https://www.youtube.com/watch?v=95MAxatKgG4"
 
-site = requests.get(url)
-#print(site.status_code)
-soup = BeautifulSoup(site.content,"html.parser")
+url = ["https://www.youtube.com/watch?v=95MAxatKgG4","https://www.youtube.com/watch?v=WvQ3xCmsphU","https://www.youtube.com/watch?v=HNziOoXDBeg","https://www.youtube.com/watch?v=cWrMvQEYVCA"]
 
-#open("video.html","w",encoding ="utf8").write(site.text)
-
-#  title
-
-title = soup.find(class_="watch-title").get_text().strip()
-
-# category 
-
-category_finder = soup.select("#watch-description-extras > ul > li > ul > li > a")
-
-category = category_finder[0].get_text()
+title_list = []
+category_list = []
+channel_name_list  = []
+subscriber_count_list = []
+views_list = []
+likes_list = []
+dislikes_list = []
 
 
-# channel name
+def scrapper(url):
 
-name = soup.find_all(class_="yt-uix-sessionlink spf-link")
+	site = requests.get(url)
+	#print(site.status_code)
+	soup = BeautifulSoup(site.content,"html.parser")
 
-# if trending video 
+	# to see and find HTML correct locators
+	#open("video.html","w",encoding ="utf8").write(site.text)
 
-trending_test = re.match ("#.*",name[0].get_text())
+	#  title
 
-if trending_test:
-	channel_name = name[1].get_text()
-else:
-	channel_name = name[0].get_text()
+	title = soup.find(class_="watch-title").get_text().strip()
+	title_list.append(title)
+	# category 
 
-# subscriber count 
+	category_finder = soup.select("#watch-description-extras > ul > li > ul > li > a")
 
-subscriber_count = soup.find(class_="yt-subscription-button-subscriber-count-branded-horizontal yt-subscriber-count").get_text()
+	category = category_finder[0].get_text()
+	category_list.append(category)
 
-# views 
+	# channel name
 
-views = soup.find(class_="watch-view-count").get_text()
+	name = soup.find_all(class_="yt-uix-sessionlink spf-link")
 
-# amount of likes and dislikes 
+	# if trending video 
 
-likes = soup.find_all(class_="yt-uix-button-content")
+	trending_test = re.match ("#.*",name[0].get_text())
 
-dislikes = likes[-10].get_text()
+	if trending_test:
+		channel_name = name[1].get_text()
+	else:
+		channel_name = name[0].get_text()
 
-likes = likes[-13].get_text()
+	channel_name_list.append(channel_name)
+	# subscriber count 
 
-# location 
+	subscriber_count = soup.find(class_="yt-subscription-button-subscriber-count-branded-horizontal yt-subscriber-count").get_text()
+	subscriber_count_list.append(subscriber_count)
+	# views 
 
-# language
+	views = soup.find(class_="watch-view-count").get_text()
+	views_list.append(views)
+	# amount of likes and dislikes 
 
-#test output 
-print(title)
-print(category)
-print(channel_name)
-print(subscriber_count)
-print(views)
-print(likes)
-print(dislikes)
+	thumbs = soup.find_all(class_="yt-uix-button-content")
+
+	dislikes = thumbs[-10].get_text()
+	dislikes_list.append(dislikes)
+	likes = thumbs[-13].get_text()
+	likes_list.append(likes)
+
+# for occasional NoneTpe error 
+try:
+	for i in url:
+		scrapper(i)
+except AttributeError:
+	for i in url:
+		scrapper(i)
+
+print(title_list)
+print(category_list)
+print(channel_name_list)
+print(subscriber_count_list)
+print(views_list)
+print(likes_list)
+print(dislikes_list)
+
+
 
