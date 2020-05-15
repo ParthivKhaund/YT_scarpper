@@ -1,8 +1,9 @@
 # exception for sites with subscriber count hidden 
 # for some likes and dislikes get to sign in 
-# output to csv
+# do something abaout nontype random errors
+# reduce time 
 
-
+# https://www.youtube.com/watch?v=ZPavtqfNojM
 from bs4 import BeautifulSoup
 import requests 
 import re
@@ -10,6 +11,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 import time
+import pandas as pd
+
 browser = webdriver.Chrome()
 
 title_list = []
@@ -111,7 +114,7 @@ browser.execute_script("window.scrollTo(0, 0)")
 
 
 for i in range(limit):
-	browser.implicitly_wait(10)
+	time.sleep(5)
 	next_url = browser.find_element_by_css_selector("#video-title")
 	next_url.click()
 
@@ -120,13 +123,23 @@ for i in range(limit):
 	comment_getter()
 	browser.execute_script("window.scrollTo(0, 0)") 
 
+
+
 # list output to be submitted to csv
 
-print(title_list)
-print(category_list)
-print(channel_name_list)
-print(subscriber_count_list)
-print(views_list)
-print(likes_list)
-print(dislikes_list)
-print(comments)
+# print(title_list)
+# print(category_list)
+# print(channel_name_list)
+# print(subscriber_count_list)
+# print(views_list)
+# print(likes_list)
+# print(dislikes_list)
+# print(comments)
+
+
+# puttiing output to pandas dataframe
+
+df = pd.DataFrame({"title":title_list,"category":category_list,"channel_name":channel_name_list,"subscriber_count":subscriber_count_list,"views":views_list,"likes":likes_list,"dislikes":dislikes_list,"comments":comments})
+
+#print(df)
+df.to_pickle("dataframe.pkl")
