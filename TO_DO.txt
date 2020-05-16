@@ -1,0 +1,11 @@
+# to do 
+
+# regex to remove vies and comments text 
+
+# exception for sites with subscriber count hidden (if else )
+
+# for some likes and dislikes get to sign in (if else see index)
+
+# branch and do whole project with just selenium (time efficency)
+
+
