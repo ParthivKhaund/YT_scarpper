@@ -1,7 +1,3 @@
-# exception for sites with subscriber count hidden (if else )
-# for some likes and dislikes get to sign in (if else see index)
-
-
 from bs4 import BeautifulSoup
 import requests 
 import re
