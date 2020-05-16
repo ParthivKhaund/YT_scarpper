@@ -1,9 +1,7 @@
-# exception for sites with subscriber count hidden 
-# for some likes and dislikes get to sign in 
-# do something abaout nontype random errors
-# reduce time 
+# exception for sites with subscriber count hidden (if else )
+# for some likes and dislikes get to sign in (if else see index)
 
-# https://www.youtube.com/watch?v=ZPavtqfNojM
+
 from bs4 import BeautifulSoup
 import requests 
 import re
@@ -43,48 +41,82 @@ def scrapper_1(url):
 	#open("video.html","w",encoding ="utf8").write(site.text)
 
 	#  title
+	try:
+		title = soup.find(class_="watch-title").get_text().strip()
+		title_list.append(title)
+	except AttributeError:
+		title = soup.find(class_="watch-title").get_text().strip()
+		title_list.append(title)
 
-	title = soup.find(class_="watch-title").get_text().strip()
-	title_list.append(title)
 	# category 
+	try:
+		category_finder = soup.select("#watch-description-extras > ul > li > ul > li > a")
 
-	category_finder = soup.select("#watch-description-extras > ul > li > ul > li > a")
+		category = category_finder[0].get_text()
+		category_list.append(category)
+	except AttributeError:
+		category_finder = soup.select("#watch-description-extras > ul > li > ul > li > a")
 
-	category = category_finder[0].get_text()
-	category_list.append(category)
-
+		category = category_finder[0].get_text()
+		category_list.append(category)
 	# channel name
 
-	name = soup.find_all(class_="yt-uix-sessionlink spf-link")
+	try:
+		name = soup.find_all(class_="yt-uix-sessionlink spf-link")
 
-	# if trending video 
+		# if trending video 
 
-	trending_test = re.match ("#.*",name[0].get_text())
+		trending_test = re.match ("#.*",name[0].get_text())
 
-	if trending_test:
-		channel_name = name[1].get_text()
-	else:
-		channel_name = name[0].get_text()
+		if trending_test:
+			channel_name = name[1].get_text()
+		else:
+			channel_name = name[0].get_text()
 
-	channel_name_list.append(channel_name)
+		channel_name_list.append(channel_name)
+	except AttributeError:
+		name = soup.find_all(class_="yt-uix-sessionlink spf-link")
+
+		# if trending video 
+
+		trending_test = re.match ("#.*",name[0].get_text())
+
+		if trending_test:
+			channel_name = name[1].get_text()
+		else:
+			channel_name = name[0].get_text()
+
+		channel_name_list.append(channel_name)		
 	# subscriber count 
-
-	subscriber_count = soup.find(class_="yt-subscription-button-subscriber-count-branded-horizontal yt-subscriber-count").get_text()
-	subscriber_count_list.append(subscriber_count)
+	try:
+		subscriber_count = soup.find(class_="yt-subscription-button-subscriber-count-branded-horizontal yt-subscriber-count").get_text()
+		subscriber_count_list.append(subscriber_count)
+	except AttributeError:
+		subscriber_count = soup.find(class_="yt-subscription-button-subscriber-count-branded-horizontal yt-subscriber-count").get_text()
+		subscriber_count_list.append(subscriber_count)		
 	# views 
-
-	views = soup.find(class_="watch-view-count").get_text()
-	views_list.append(views)
+	try:
+		views = soup.find(class_="watch-view-count").get_text()
+		views_list.append(views)
+	except AttributeError:
+		views = soup.find(class_="watch-view-count").get_text()
+		views_list.append(views)
 
 	# amount of likes and dislikes 
+	try:
+		thumbs = soup.find_all(class_="yt-uix-button-content")
 
-	thumbs = soup.find_all(class_="yt-uix-button-content")
+		dislikes = thumbs[-10].get_text()
+		dislikes_list.append(dislikes)
+		likes = thumbs[-13].get_text()
+		likes_list.append(likes)
+	except AttributeError:
+		thumbs = soup.find_all(class_="yt-uix-button-content")
 
-	dislikes = thumbs[-10].get_text()
-	dislikes_list.append(dislikes)
-	likes = thumbs[-13].get_text()
-	likes_list.append(likes)
-
+		dislikes = thumbs[-10].get_text()
+		dislikes_list.append(dislikes)
+		likes = thumbs[-13].get_text()
+		likes_list.append(likes)
 
 # amount of comments 
 
@@ -114,7 +146,6 @@ browser.execute_script("window.scrollTo(0, 0)")
 
 
 for i in range(limit):
-	time.sleep(5)
 	next_url = browser.find_element_by_css_selector("#video-title")
 	next_url.click()
 
@@ -127,14 +158,14 @@ for i in range(limit):
 
 # list output to be submitted to csv
 
-# print(title_list)
-# print(category_list)
-# print(channel_name_list)
-# print(subscriber_count_list)
-# print(views_list)
-# print(likes_list)
-# print(dislikes_list)
-# print(comments)
+print(title_list)
+print(category_list)
+print(channel_name_list)
+print(subscriber_count_list)
+print(views_list)
+print(likes_list)
+print(dislikes_list)
+print(comments)
 
 
 # puttiing output to pandas dataframe
@@ -142,4 +173,4 @@ for i in range(limit):
 df = pd.DataFrame({"title":title_list,"category":category_list,"channel_name":channel_name_list,"subscriber_count":subscriber_count_list,"views":views_list,"likes":likes_list,"dislikes":dislikes_list,"comments":comments})
 
 #print(df)
-df.to_pickle("dataframe.pkl")
+df.to_pickle("dataframe2.pkl")
